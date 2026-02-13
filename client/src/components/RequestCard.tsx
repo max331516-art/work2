@@ -67,6 +67,15 @@ export function RequestCard({ request, role }: RequestCardProps) {
     });
   };
 
+  const getStatusLabel = (status: string) => {
+    switch (status) {
+      case "new": return "НОВЫЙ";
+      case "in_progress": return "В ПУТИ";
+      case "completed": return "ДОСТАВЛЕНО";
+      default: return status;
+    }
+  };
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "new": return "bg-red-500 hover:bg-red-600";
@@ -85,7 +94,7 @@ export function RequestCard({ request, role }: RequestCardProps) {
       <CardHeader className="pb-2 pt-4 pl-5">
         <div className="flex justify-between items-start">
           <Badge variant="outline" className={`mb-2 font-mono uppercase text-[10px] tracking-wider ${request.status === 'new' ? 'bg-red-50 text-red-700 border-red-200' : ''}`}>
-            {request.status.replace('_', ' ')}
+            {getStatusLabel(request.status)}
           </Badge>
           <span className="text-xs text-muted-foreground font-mono">
             #{request.id.toString().padStart(4, '0')}
@@ -109,7 +118,7 @@ export function RequestCard({ request, role }: RequestCardProps) {
 
         <div className={`flex items-center text-sm ${isUrgent ? 'text-red-600 font-bold' : 'text-muted-foreground'}`}>
           <CalendarIcon className="h-4 w-4 mr-2 shrink-0" />
-          <span>Due: {format(new Date(request.deliveryDate), "MMM dd, yyyy")}</span>
+          <span>Срок: {format(new Date(request.deliveryDate), "dd.MM.yyyy")}</span>
           {isUrgent && <AlertCircle className="h-4 w-4 ml-auto animate-pulse" />}
         </div>
       </CardContent>
@@ -119,24 +128,24 @@ export function RequestCard({ request, role }: RequestCardProps) {
           <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
               <Button className="w-full bg-secondary hover:bg-secondary/90 text-white font-display uppercase tracking-wide">
-                Assign Driver <Truck className="ml-2 h-4 w-4" />
+                Назначить водителя <Truck className="ml-2 h-4 w-4" />
               </Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>Assign Driver</DialogTitle>
+                <DialogTitle>Назначение водителя</DialogTitle>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium">Select Driver</label>
+                  <label className="text-sm font-medium">Выберите водителя</label>
                   <Select onValueChange={setDriverId}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Choose a driver..." />
+                      <SelectValue placeholder="Выберите из списка..." />
                     </SelectTrigger>
                     <SelectContent>
                       {drivers.map(d => (
                         <SelectItem key={d.id} value={d.id.toString()}>
-                          {d.name} ({d.username})
+                          {d.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -147,7 +156,7 @@ export function RequestCard({ request, role }: RequestCardProps) {
                   disabled={!driverId || isPending}
                   className="w-full"
                 >
-                  Confirm Assignment
+                  Подтвердить назначение
                 </Button>
               </div>
             </DialogContent>
@@ -160,21 +169,21 @@ export function RequestCard({ request, role }: RequestCardProps) {
             disabled={isPending}
             className="w-full bg-green-600 hover:bg-green-700 text-white font-display uppercase tracking-wide text-lg h-12"
           >
-            Delivered <CheckCircle2 className="ml-2 h-5 w-5" />
+            ДОСТАВЛЕНО <CheckCircle2 className="ml-2 h-5 w-5" />
           </Button>
         )}
 
         {role === "foreman" && (
           <p className="text-xs text-muted-foreground italic w-full text-center">
-            {request.status === "new" ? "Waiting for assignment..." : 
-             request.status === "in_progress" ? "Driver is on the way" : 
-             "Delivery completed"}
+            {request.status === "new" ? "Ожидание назначения..." : 
+             request.status === "in_progress" ? "Водитель в пути" : 
+             "Доставка завершена"}
           </p>
         )}
         
         {role === "supplier" && request.status !== "new" && (
            <p className="text-xs text-muted-foreground italic w-full text-center">
-             {request.status === "completed" ? "Order fulfilled" : "Currently in transit"}
+             {request.status === "completed" ? "Заказ выполнен" : "В процессе доставки"}
            </p>
         )}
       </CardFooter>

@@ -14,57 +14,26 @@
   --primary: 25 95% 53%;
   --primary-foreground: 0 0% 100%;
 
-  /* Secondary: Industrial Blue/Slate - Strong & Stable */
-  --secondary: 215 25% 27%;
+  /* Secondary: Deep Navy - Professional & Serious */
+  --secondary: 222 47% 11%;
   --secondary-foreground: 210 20% 98%;
 
-  /* Muted: Concrete Grays */
-  --muted: 220 10% 90%;
-  --muted-foreground: 220 10% 40%;
+  /* Card and Borders: More refined */
+  --card: 0 0% 100%;
+  --card-foreground: 222 47% 11%;
+  --card-border: 220 10% 90%;
 
-  /* Accents */
-  --accent: 210 20% 94%;
-  --accent-foreground: 220 10% 10%;
-
-  /* States */
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 0 0% 98%;
-  --success: 142 71% 45%;
-  --warning: 45 93% 47%;
-
-  /* Borders */
-  --border: 220 10% 85%;
-  --input: 220 10% 85%;
-  --ring: 25 95% 53%;
-
-  --radius: 0.25rem; /* Squarish, industrial look */
-
-  --font-display: 'Chakra Petch', sans-serif;
+  --font-display: 'Inter', sans-serif;
   --font-body: 'Inter', sans-serif;
+  --radius: 0.5rem; /* Smoother rounded corners */
 }
 
 .dark {
-  --background: 220 15% 10%;
+  --background: 222 47% 4%;
   --foreground: 210 20% 98%;
 
-  --primary: 25 95% 53%;
-  --primary-foreground: 0 0% 100%;
-
-  --secondary: 215 25% 27%;
+  --secondary: 217 33% 17%;
   --secondary-foreground: 210 20% 98%;
-
-  --muted: 215 15% 18%;
-  --muted-foreground: 215 10% 60%;
-
-  --accent: 215 15% 18%;
-  --accent-foreground: 210 20% 98%;
-
-  --destructive: 0 62% 30%;
-  --destructive-foreground: 0 0% 98%;
-
-  --border: 215 15% 18%;
-  --input: 215 15% 18%;
-  --ring: 25 95% 53%;
 }
 
 @layer base {
@@ -75,15 +44,15 @@
     @apply bg-background text-foreground antialiased font-body;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display tracking-tight uppercase;
+    @apply font-body font-bold tracking-tight;
   }
 }
 
 @layer components {
   .industrial-card {
-    @apply bg-card border-l-4 border-l-primary shadow-md hover:shadow-lg transition-all duration-200;
+    @apply bg-card border border-border shadow-sm hover:shadow-md transition-all duration-200 rounded-lg;
   }
   .industrial-button {
-    @apply uppercase tracking-wider font-display font-bold shadow-sm active:translate-y-0.5 transition-all;
+    @apply font-medium tracking-normal shadow-sm active:translate-y-0.5 transition-all;
   }
 }

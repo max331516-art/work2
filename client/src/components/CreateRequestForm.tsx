@@ -28,54 +28,44 @@ import { CalendarIcon, Loader2, Plus, Minus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { z } from "zod";
 
-const LOCATIONS = ["Site Alpha (Downtown)", "Site Beta (Industrial)", "Site Gamma (Residential)"];
-const MATERIALS = ["Concrete M300", "Steel Rebar 12mm", "Bricks (Red)", "Cement Bags (50kg)", "Sand (River)", "Gravel"];
-const UNITS = ["m3", "tons", "pcs", "bags", "kg"];
+const LOCATIONS = ["Объект Альфа (Центр)", "Объект Бета (Промзона)", "Объект Гамма (Жилой массив)"];
+const MATERIALS = ["Бетон M300", "Арматура 12мм", "Кирпич (Красный)", "Цемент (50кг)", "Песок", "Щебень"];
+const UNITS = ["м3", "тонн", "шт", "мешков", "кг"];
 
 // Schema adaptation for form (string dates need conversion)
 const formSchema = insertRequestSchema.extend({
-  deliveryDate: z.date({ required_error: "Delivery date is required" }),
-  quantity: z.number().min(1, "Quantity must be at least 1"),
+  deliveryDate: z.date({ required_error: "Дата доставки обязательна" }),
+  quantity: z.number().min(1, "Количество должно быть не менее 1"),
 });
 
 export function CreateRequestForm() {
   const { mutate, isPending } = useCreateRequest();
   
-  // In a real app, we'd get the current logged in user. 
-  // For this demo, we'll pick the first user with role 'foreman' or hardcode an ID.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       location: "",
       material: "",
       quantity: 1,
-      unit: "pcs",
+      unit: "шт",
       comment: "",
-      createdById: 1, // Hardcoded for MVP as per instructions (or assumes seed data)
+      createdById: 1,
     },
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    // Format date to string YYYY-MM-DD for API if needed, but schema handles Date object usually if coerced.
-    // Drizzle/Postgres expects YYYY-MM-DD string often, but drizzle-zod handles conversions.
-    // However, our schema defines deliveryDate as date(), which usually maps to string in JSON.
-    // Let's ensure we pass a string or Date object correctly.
-    // Based on the schema definition in shared/schema, it expects a string "YYYY-MM-DD" or Date object depending on driver.
-    // We will pass the Date object directly as most modern libs handle it, or stringify if it fails.
-    
-    // Actually, `drizzle-orm/pg-core` `date` type expects a string "YYYY-MM-DD".
     const formattedData = {
       ...values,
       deliveryDate: format(values.deliveryDate, 'yyyy-MM-dd'),
     };
     
-    mutate(formattedData as any, { // casting because of date string/object mismatch potential
+    mutate(formattedData as any, {
       onSuccess: () => {
         form.reset({
           location: "",
           material: "",
           quantity: 1,
-          unit: "pcs",
+          unit: "шт",
           comment: "",
           createdById: 1,
         });
@@ -90,21 +80,22 @@ export function CreateRequestForm() {
     }
   };
 
+  const selectedDate = form.watch("deliveryDate");
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         
-        {/* Location Selection */}
         <FormField
           control={form.control}
           name="location"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Location</FormLabel>
+              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Объект</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger className="h-14 text-lg bg-white border-2 border-border focus:border-primary transition-colors">
-                    <SelectValue placeholder="Select Site" />
+                    <SelectValue placeholder="Выберите объект" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
@@ -118,7 +109,6 @@ export function CreateRequestForm() {
           )}
         />
 
-        {/* Material Selection */}
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-2">
             <FormField
@@ -126,11 +116,11 @@ export function CreateRequestForm() {
               name="material"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Material</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Материал</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="h-14 text-lg bg-white border-2 border-border focus:border-primary transition-colors">
-                        <SelectValue placeholder="Select Material" />
+                        <SelectValue placeholder="Выберите материал" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -151,11 +141,11 @@ export function CreateRequestForm() {
               name="unit"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Unit</FormLabel>
+                  <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Ед. изм.</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="h-14 text-lg bg-white border-2 border-border focus:border-primary transition-colors">
-                        <SelectValue placeholder="Unit" />
+                        <SelectValue placeholder="Ед." />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -171,13 +161,12 @@ export function CreateRequestForm() {
           </div>
         </div>
 
-        {/* Quantity Stepper */}
         <FormField
           control={form.control}
           name="quantity"
           render={({ field }) => (
             <FormItem>
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Quantity</FormLabel>
+              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Количество</FormLabel>
               <div className="flex items-center gap-2">
                 <Button 
                   type="button" 
@@ -209,13 +198,12 @@ export function CreateRequestForm() {
           )}
         />
 
-        {/* Date Picker */}
         <FormField
           control={form.control}
           name="deliveryDate"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Required Date</FormLabel>
+              <FormLabel className="text-xs uppercase font-bold tracking-wider text-muted-foreground">Дата поставки</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
@@ -227,9 +215,9 @@ export function CreateRequestForm() {
                       )}
                     >
                       {field.value ? (
-                        format(field.value, "PPP")
+                        format(field.value, "dd.MM.yyyy")
                       ) : (
-                        <span>Pick a date</span>
+                        <span>Выберите дату</span>
                       )}
                       <CalendarIcon className="ml-auto h-5 w-5 opacity-50" />
                     </Button>
@@ -255,9 +243,9 @@ export function CreateRequestForm() {
         <Button 
           type="submit" 
           disabled={isPending}
-          className="w-full h-16 text-xl font-display uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg mt-8"
+          className="w-full h-16 text-xl font-body uppercase tracking-widest bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg mt-8"
         >
-          {isPending ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : "Create Request"}
+          {isPending ? <Loader2 className="mr-2 h-6 w-6 animate-spin" /> : "Создать заявку"}
         </Button>
       </form>
     </Form>

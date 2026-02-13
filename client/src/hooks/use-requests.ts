@@ -42,15 +42,15 @@ export function useCreateRequest() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.requests.list.path] });
       toast({
-        title: "Request Created",
-        description: "Materials requested successfully.",
-        variant: "default", // Using default which is styled nicely
+        title: "Заявка создана",
+        description: "Материалы успешно заказаны.",
+        variant: "default",
         className: "border-l-4 border-primary bg-background text-foreground"
       });
     },
     onError: (error) => {
       toast({
-        title: "Error",
+        title: "Ошибка",
         description: error.message,
         variant: "destructive",
       });
@@ -77,14 +77,14 @@ export function useUpdateRequest() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.requests.list.path] });
       toast({
-        title: "Updated",
-        description: "Request status updated successfully.",
+        title: "Обновлено",
+        description: "Статус заявки успешно изменен.",
         className: "border-l-4 border-primary bg-background text-foreground"
       });
     },
     onError: (error) => {
       toast({
-        title: "Update Failed",
+        title: "Ошибка обновления",
         description: error.message,
         variant: "destructive",
       });

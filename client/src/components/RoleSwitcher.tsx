@@ -26,9 +26,9 @@ export function RoleSwitcher({ currentRole, onRoleChange }: RoleSwitcherProps) {
 
   const getLabel = (role: Role) => {
     switch (role) {
-      case "foreman": return "FOREMAN";
-      case "supplier": return "SUPPLIER";
-      case "driver": return "DRIVER";
+      case "foreman": return "ПРОРАБ";
+      case "supplier": return "СНАБЖЕНЕЦ";
+      case "driver": return "ВОДИТЕЛЬ";
     }
   };
 
@@ -37,7 +37,7 @@ export function RoleSwitcher({ currentRole, onRoleChange }: RoleSwitcherProps) {
       <div className="flex justify-between items-center max-w-md mx-auto">
         <div className="flex items-center gap-2">
           <div className="h-8 w-1 bg-primary rounded-full"></div>
-          <h1 className="text-lg font-bold font-display tracking-wider">SNAB<span className="text-primary">ZHENIE</span></h1>
+          <h1 className="text-lg font-bold font-display tracking-wider">СНАБ<span className="text-primary">ЖЕНИЕ</span></h1>
         </div>
         
         <DropdownMenu>
@@ -50,13 +50,13 @@ export function RoleSwitcher({ currentRole, onRoleChange }: RoleSwitcherProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-40 font-display">
             <DropdownMenuItem onClick={() => onRoleChange("foreman")} className="cursor-pointer">
-              <HardHat className="h-4 w-4 mr-2" /> Foreman
+              <HardHat className="h-4 w-4 mr-2" /> Прораб
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onRoleChange("supplier")} className="cursor-pointer">
-              <UserCircle className="h-4 w-4 mr-2" /> Supplier
+              <UserCircle className="h-4 w-4 mr-2" /> Снабженец
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => onRoleChange("driver")} className="cursor-pointer">
-              <Truck className="h-4 w-4 mr-2" /> Driver
+              <Truck className="h-4 w-4 mr-2" /> Водитель
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
