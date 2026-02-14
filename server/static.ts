@@ -3,23 +3,23 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 
-// 👇 фикс для ESM (__dirname не существует по умолчанию)
+// аналог __dirname для ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(__dirname, "public");
+  // dist/public относительно папки server
+  const distPath = path.resolve(__dirname, "../dist/public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
-      `Could not find the build directory: ${distPath}, make sure to build the client first`,
+      `Build not found at ${distPath}. Did you run vite build?`
     );
   }
 
   app.use(express.static(distPath));
 
-  // fallback на index.html (SPA)
-  app.use("/*", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  app.get("*", (_req, res) => {
+    res.sendFile(path.join(distPath, "index.html"));
   });
 }
